@@ -20,17 +20,15 @@ public class Entity {
     @NonNull
     @Indexed()
     private String name;
-    @NonNull
     private String email;
     @Indexed()
     @NonNull
     private String phoneNumber;
-    private String password;
     @NonNull
-    @Indexed()
+    private String password;
     private Type type;
     private List<QueueDescription> queueDescriptions;
     private String summary;
     @Indexed()
-    private List<Address> address;
+    private Address address;
 }
