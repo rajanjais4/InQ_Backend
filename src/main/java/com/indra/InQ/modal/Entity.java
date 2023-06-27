@@ -29,6 +29,5 @@ public class Entity {
     private Type type;
     private List<QueueDescription> queueDescriptions;
     private String summary;
-    @Indexed()
     private Address address;
 }

@@ -40,17 +40,17 @@ public class EntityService {
             throw new ApiRequestException(msg);
         }
 
-        if(entityRepo.findByEmail(entity.getEmail()).orElse(null)!=null)
-        {
-            String msg="Email already exists - "+entity.getEmail();
-            System.out.println(msg);
-            throw new ApiRequestException(msg);
-        }
+//        if(entityRepo.findByEmail(entity.getEmail()).orElse(null)!=null)
+//        {
+//            String msg="Email already exists - "+entity.getEmail();
+//            System.out.println(msg);
+//            throw new ApiRequestException(msg);
+//        }
         System.out.println("Saving New User");
         String id=common.createPersonId(entity);
         entity.set_id(id);
 //        Adding unique Id to queue description
-        for(int i=0;i<entity.getQueueDescriptions().size();i++) {
+        for(int i=0;entity.getQueueDescriptions()!=null && i<entity.getQueueDescriptions().size();i++) {
             entity.getQueueDescriptions().get(i).setId(common.createQueueId(entity, entity.getQueueDescriptions().get(i).getName()));
             queueService.createNewQueue(entity.getQueueDescriptions().get(i));
         }
