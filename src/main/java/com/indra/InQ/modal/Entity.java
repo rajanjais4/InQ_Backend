@@ -27,7 +27,7 @@ public class Entity {
     @NonNull
     private String password;
     private Type type;
-    private List<QueueDescription> queueDescriptions;
+    private List<String> queueIds;
     private String summary;
     private Address address;
 }

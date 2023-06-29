@@ -15,8 +15,7 @@ public class Common {
             return "E_"+"OTH_"+entity.getPhoneNumber();
     }
 
-    public String createQueueId(Entity entity, @NonNull String name) {
-
-        return "Q"+"_"+entity.getPhoneNumber()+"_"+name;
+    public String createQueueId(String entityId, @NonNull String name) {
+        return "Q"+"_"+entityId+"_"+name;
     }
 }

@@ -1,5 +1,6 @@
 package com.indra.InQ.controller;
 
+import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
 import com.indra.InQ.service.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,23 @@ public class EntityController {
         entityService.saveNewUser(entity);
         return ResponseEntity.ok(entity);
     }
+    @PostMapping("/updateEntity")
+    public ResponseEntity<Entity> updateEntity(@RequestBody Entity entity){
+
+        return ResponseEntity.ok(entityService.updateEntity(entity));
+    }
     @GetMapping("/getEntityByPhoneNumber")
     public ResponseEntity<Entity> getEntityByPhoneNumber(@RequestParam("phoneNumber")String phoneNumber){
         Entity entity= entityService.findUserByPhoneNumber(phoneNumber);
         return ResponseEntity.ok(entity);
+    }
+    @GetMapping("/logInEntityByPhoneNumber")
+    public ResponseEntity<Entity> logInEntityByPhoneNumber(@RequestParam("phoneNumber")String phoneNumber,
+                                                           @RequestParam("password")String password){
+        Entity entity= entityService.findUserByPhoneNumber(phoneNumber);
+        if(entity!=null && entity.getPassword().equals(password))
+            return ResponseEntity.ok(entity);
+        throw new ApiRequestException("Invalid phone number or password");
     }
 
     @GetMapping("/getAllEntity")
