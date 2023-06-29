@@ -2,7 +2,9 @@ package com.indra.InQ.controller;
 
 import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
+import com.indra.InQ.modal.EntityQueueModal;
 import com.indra.InQ.service.EntityService;
+import com.indra.InQ.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,9 @@ import java.util.List;
 public class EntityController {
     @Autowired
     EntityService entityService;
+
+    @Autowired
+    QueueService queueService;
     @ApiIgnore
     @RequestMapping(value="/")
     public void redirect(HttpServletResponse response) throws IOException {
@@ -38,12 +43,9 @@ public class EntityController {
         return ResponseEntity.ok(entity);
     }
     @GetMapping("/logInEntityByPhoneNumber")
-    public ResponseEntity<Entity> logInEntityByPhoneNumber(@RequestParam("phoneNumber")String phoneNumber,
-                                                           @RequestParam("password")String password){
-        Entity entity= entityService.findUserByPhoneNumber(phoneNumber);
-        if(entity!=null && entity.getPassword().equals(password))
-            return ResponseEntity.ok(entity);
-        throw new ApiRequestException("Invalid phone number or password");
+    public ResponseEntity<EntityQueueModal> logInEntityQueueByPhoneNumber(@RequestParam("phoneNumber")String phoneNumber,
+                                                                     @RequestParam("password")String password){
+        return ResponseEntity.ok(entityService.logInEntityQueueByPhoneNumber(phoneNumber,password));
     }
 
     @GetMapping("/getAllEntity")

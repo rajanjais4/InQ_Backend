@@ -5,11 +5,13 @@ import com.indra.InQ.common.Common;
 import com.indra.InQ.exception.ApiException;
 import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
+import com.indra.InQ.modal.EntityQueueModal;
 import com.indra.InQ.modal.common.Type;
 import com.indra.InQ.repository.EntityRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -85,8 +87,12 @@ public class EntityService {
         if(entityDb==null)
             throw new ApiRequestException("Invalid EntityId");
         if(operation=="add"){
+
             if(entityDb.getQueueIds()==null)
                 entityDb.setQueueIds(new ArrayList<>());
+            if(entityDb.getQueueIds().contains(queueId)) {
+                System.out.println("Queue already exist - "+queueId);
+            }
             entityDb.getQueueIds().add(queueId);
         }
         else if(operation=="remove")
@@ -99,5 +105,16 @@ public class EntityService {
 
     public Entity findUserByEntityId(String entityId) {
         return entityRepo.findById(entityId).orElse(null);
+    }
+
+    public EntityQueueModal logInEntityQueueByPhoneNumber(String phoneNumber, String password) {
+        Entity entity= findUserByPhoneNumber(phoneNumber);
+        if(entity!=null && entity.getPassword().equals(password)){
+            EntityQueueModal entityQueueModal=new EntityQueueModal();
+            entityQueueModal.setEntity(entity);
+            entityQueueModal.setQueueList(queueService.getQueueByIdList(entity.getQueueIds()));
+            return entityQueueModal;
+        }
+        throw new ApiRequestException("Invalid phone number or password");
     }
 }

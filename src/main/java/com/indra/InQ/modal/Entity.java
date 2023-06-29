@@ -1,10 +1,10 @@
 package com.indra.InQ.modal;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.indra.InQ.modal.common.Address;
-import com.indra.InQ.modal.common.QueueDescription;
 import com.indra.InQ.modal.common.Type;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Document(collection = "entity")
 public class Entity {
     @Id

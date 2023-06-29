@@ -30,12 +30,23 @@ public class QueueService {
         queueModal.setId(queueDescription.getId());
         queueModal.setStartRange(queueDescription.getStartRange());
         queueModal.setEndRange(queueDescription.getEndRange());
-        queueModal.setMaxLimit(queueDescription.getMaxLimit());
+        queueModal.setMaxInQueueLimit(queueDescription.getMaxInQueueLimit());
+        queueModal.setDescription(queueDescription.getDescription());
         queueRepo.save(queueModal);
         return queueModal;
     }
     public QueueModal getQueueById(String queueId){
         return queueRepo.findById(queueId).orElse(null);
+    }
+    public List<QueueModal> getQueueByIdList(List<String> queueIdList){
+        List<QueueModal>queueModalList=new ArrayList<>();
+        for(int i=0;queueIdList!=null && i<queueIdList.size();i++){
+            QueueModal queueModal=getQueueById(queueIdList.get(i));
+            if(queueModal==null)
+                throw new ApiRequestException("invalid queueId - "+queueIdList.get(i));
+            queueModalList.add(queueModal);
+        }
+        return queueModalList;
     }
 
     public void removeQueueById(String queueId){

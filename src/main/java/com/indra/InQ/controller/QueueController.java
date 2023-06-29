@@ -27,12 +27,9 @@ public class QueueController {
         queueService.removeQueueByQueueIdList(queueIdList,entityId);
         return ResponseEntity.ok("successfully removed all queues");
     }
-    @GetMapping("/getQueueById")
-    public ResponseEntity<QueueModal> getEntityByPhoneNumber(@RequestParam("queueId")String queueId){
-        QueueModal queue= queueService.getQueueById(queueId);
-        if(queue==null){
-            throw new ApiRequestException("queue Id not found");
-        }
-        return ResponseEntity.ok(queue);
+    @GetMapping("/getQueueByIdList")
+    public ResponseEntity<List<QueueModal>> getQueueByIdList(@RequestParam("queueId")List<String> queueIds){
+        List<QueueModal> queues= queueService.getQueueByIdList(queueIds);
+        return ResponseEntity.ok(queues);
     }
 }

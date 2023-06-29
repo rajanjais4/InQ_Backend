@@ -12,9 +12,8 @@ public class QueueDescription {
     private String id;
     @NonNull
     private String name;
-    @NonNull
     private String startRange;
-    @NonNull
     private String endRange;
-    private String maxLimit;
+    private String maxInQueueLimit;
+    private String description;
 }
