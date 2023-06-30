@@ -38,12 +38,12 @@ public class EntityController {
         return ResponseEntity.ok(entityService.updateEntity(entity));
     }
     @GetMapping("/getEntityByPhoneNumber")
-    public ResponseEntity<Entity> getEntityByPhoneNumber(@RequestParam("phoneNumber")String phoneNumber){
+    public ResponseEntity<Entity> getEntityByPhoneNumber(@RequestParam("phoneNumber")Long phoneNumber){
         Entity entity= entityService.findUserByPhoneNumber(phoneNumber);
         return ResponseEntity.ok(entity);
     }
     @GetMapping("/logInEntityByPhoneNumber")
-    public ResponseEntity<EntityQueueModal> logInEntityQueueByPhoneNumber(@RequestParam("phoneNumber")String phoneNumber,
+    public ResponseEntity<EntityQueueModal> logInEntityQueueByPhoneNumber(@RequestParam("phoneNumber")Long phoneNumber,
                                                                      @RequestParam("password")String password){
         return ResponseEntity.ok(entityService.logInEntityQueueByPhoneNumber(phoneNumber,password));
     }

@@ -31,7 +31,7 @@ public class EntityService {
     public List<Entity> findAll(){
         return entityRepo.findAll();
     }
-    public Entity findUserByPhoneNumber(String phoneNumber)
+    public Entity findUserByPhoneNumber(Long phoneNumber)
     {
         Entity entityResponse = entityRepo.findByPhoneNumber(phoneNumber).orElse(null);
         if(entityResponse==null)
@@ -54,7 +54,7 @@ public class EntityService {
             entity.setType(Type.valueOf(env.getProperty("entity.type.default")));
         }
         String id=common.createPersonId(entity);
-        entity.set_id(id);
+        entity.setId(id);
         if(entity.getQueueIds()!=null)
         entity.getQueueIds().clear();
         return entityRepo.save(entity);
@@ -107,7 +107,7 @@ public class EntityService {
         return entityRepo.findById(entityId).orElse(null);
     }
 
-    public EntityQueueModal logInEntityQueueByPhoneNumber(String phoneNumber, String password) {
+    public EntityQueueModal logInEntityQueueByPhoneNumber(Long phoneNumber, String password) {
         Entity entity= findUserByPhoneNumber(phoneNumber);
         if(entity!=null && entity.getPassword().equals(password)){
             EntityQueueModal entityQueueModal=new EntityQueueModal();

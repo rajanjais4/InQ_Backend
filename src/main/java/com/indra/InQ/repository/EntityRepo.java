@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface EntityRepo extends MongoRepository<Entity,String> {
-    Optional<Entity> findByPhoneNumber(String phoneNumber);
+    Optional<Entity> findByPhoneNumber(Long phoneNumber);
 
     Optional<Entity> findByEmail(String email);
 }
