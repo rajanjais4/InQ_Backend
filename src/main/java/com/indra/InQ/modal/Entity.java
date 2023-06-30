@@ -18,14 +18,14 @@ import java.util.List;
 @Document(collection = "entity")
 public class Entity {
     @Id
-    private String _id;
+    private String id;
     @NonNull
     @Indexed()
     private String name;
     private String email;
     @Indexed()
     @NonNull
-    private String phoneNumber;
+    private Long phoneNumber;
     @NonNull
     private String password;
     private Type type;

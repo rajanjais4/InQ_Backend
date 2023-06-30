@@ -14,5 +14,5 @@ public class QueueModal extends QueueDescription {
     List<String>userInQueueList=new ArrayList<>();
     List<String>userOutOfQueueList=new ArrayList<>();
     @JsonIgnore
-    int maxUserOutOfQueueListSize=100;
+    Integer maxUserOutOfQueueListSize=100;
 }

@@ -11,14 +11,14 @@ public class GeneralWebSocketHandler implements WebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        sessions.put(session.getId(), session);
+//        sessions.put(session.getId(), session);
     }
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         String text = message.getPayload().toString();
         for (Session s : sessions.values()) {
-            s.sendMessage(new TextMessage(text));
+//            s.sendMessage(new TextMessage(text));
         }
     }
 

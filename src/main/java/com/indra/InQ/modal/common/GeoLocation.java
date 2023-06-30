@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GeoLocation {
-    private String log;
-    private String lat;
+    private Double log;
+    private Double lat;
 }
