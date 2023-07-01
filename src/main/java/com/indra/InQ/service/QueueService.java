@@ -5,14 +5,12 @@ import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
 import com.indra.InQ.modal.QueueModal;
 import com.indra.InQ.modal.common.QueueDescription;
+import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.repository.QueueRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class QueueService {
@@ -32,6 +30,8 @@ public class QueueService {
         queueModal.setEndRange(queueDescription.getEndRange());
         queueModal.setMaxInQueueLimit(queueDescription.getMaxInQueueLimit());
         queueModal.setDescription(queueDescription.getDescription());
+        queueModal.setStatus(queueDescription.getStatus());
+        queueModal.setCategory(queueDescription.getCategory());
         queueRepo.save(queueModal);
         return queueModal;
     }
@@ -53,9 +53,10 @@ public class QueueService {
         queueRepo.deleteById(queueId);
     }
     public boolean addQueueCheck(List<QueueDescription>queueDescriptions,String entityId){
-        if(entityService.findUserByEntityId(entityId)==null)
+        Entity entity=entityService.findUserByEntityId(entityId);
+        if(entity==null)
             throw new ApiRequestException("Invalid entityId");
-//      Name check
+//      Name check and category check
         Map<String,Integer> nameMap=new HashMap<>();
         for(int i=0;i<queueDescriptions.size();i++) {
             String qName=queueDescriptions.get(i).getName();
@@ -65,21 +66,27 @@ public class QueueService {
             String qId=common.createQueueId(entityId,qName);
             if(getQueueById(qId)!=null)
                 throw new ApiRequestException("Invalid queue description, queue id already exists");
+            if(! entity.getCategories().contains(queueDescriptions.get(i).getCategory()))
+                throw new ApiRequestException("Category -"+queueDescriptions.get(i).getCategory()+" not found in entity");
         }
+
+//        TODO: Add range check
         return true;
     }
-    public List<String> addQueueByQueueDescription(List<QueueDescription>queueDescriptions,String entityId){
-        List<String> responseQueueId=new ArrayList<>();
+    public List<QueueModal> addQueueByQueueDescription(List<QueueDescription>queueDescriptions,String entityId){
+        List<QueueModal> responseQueues=new ArrayList<>();
         if(addQueueCheck(queueDescriptions,entityId)==false)
             throw new ApiRequestException("Invalid queue description");
         for(int i=0;i<queueDescriptions.size();i++) {
             String queueId=common.createQueueId(entityId, queueDescriptions.get(i).getName());
             queueDescriptions.get(i).setId(queueId);
-            createNewQueue(queueDescriptions.get(i));
+            if(queueDescriptions.get(i).getCategory()==null)
+                queueDescriptions.get(i).setStatus(Status.stopped);
+            QueueModal queueModal=createNewQueue(queueDescriptions.get(i));
             entityService.updateQueueIds(queueId,entityId);
-            responseQueueId.add(queueId);
+            responseQueues.add(queueModal);
         }
-        return responseQueueId;
+        return responseQueues;
     }
 
     public void removeQueueByQueueIdList(List<String> queueIdList, String entityId) {

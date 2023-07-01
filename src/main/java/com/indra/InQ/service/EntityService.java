@@ -6,6 +6,7 @@ import com.indra.InQ.exception.ApiException;
 import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
 import com.indra.InQ.modal.EntityQueueModal;
+import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.modal.common.Type;
 import com.indra.InQ.repository.EntityRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,17 @@ public class EntityService {
         entity.setId(id);
         if(entity.getQueueIds()!=null)
         entity.getQueueIds().clear();
+        entity.setStatus(Status.stopped);
+        if(entity.getCategories()!=null){
+            entity.getCategories().clear();
+        }
+//        TODO: remove below line
+        else{
+            List<String>demoList=new ArrayList<>();
+            demoList.add("cat1");
+            demoList.add("cat2");
+            entity.setCategories(demoList);
+        }
         return entityRepo.save(entity);
     }
 
@@ -77,6 +89,8 @@ public class EntityService {
             entityDb.setEmail(entity.getEmail());
         if(entity.getType()!=null)
             entityDb.setType(entity.getType());
+        if(entity.getStatus()!=null)
+            entityDb.setStatus(entity.getStatus());
         return entityRepo.save(entityDb);
     }
     public boolean updateQueueIds(String queueId,String entityId){

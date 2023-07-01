@@ -1,6 +1,7 @@
 package com.indra.InQ.modal;
 
 import com.indra.InQ.modal.common.Address;
+import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.modal.common.Type;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,8 @@ public class Entity {
     private Long phoneNumber;
     @NonNull
     private String password;
+    private Status status;
+    private List<String> categories;
     private Type type;
     private List<String> queueIds;
     private String summary;
