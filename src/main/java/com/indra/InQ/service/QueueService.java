@@ -66,7 +66,8 @@ public class QueueService {
             String qId=common.createQueueId(entityId,qName);
             if(getQueueById(qId)!=null)
                 throw new ApiRequestException("Invalid queue description, queue id already exists");
-            if(! entity.getCategories().contains(queueDescriptions.get(i).getCategory()))
+            if(queueDescriptions.get(i).getCategory()!=null
+                    && !entity.getCategories().contains(queueDescriptions.get(i).getCategory()))
                 throw new ApiRequestException("Category -"+queueDescriptions.get(i).getCategory()+" not found in entity");
         }
 
