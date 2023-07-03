@@ -3,7 +3,9 @@ package com.indra.InQ.controller;
 import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
 import com.indra.InQ.modal.QueueModal;
+import com.indra.InQ.modal.common.Direction;
 import com.indra.InQ.modal.common.QueueDescription;
+import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +25,7 @@ public class QueueController {
         return ResponseEntity.ok(responseQueues);
     }
     @PostMapping("/removeQueueByIdList")
-    public ResponseEntity<String> addNewEntity(@RequestBody List<String> queueIdList,
+    public ResponseEntity<String> removeQueueByIdList(@RequestBody List<String> queueIdList,
                                                      @RequestParam ("entityId")String entityId){
         queueService.removeQueueByQueueIdList(queueIdList,entityId);
         return ResponseEntity.ok("successfully removed all queues");
@@ -33,4 +35,21 @@ public class QueueController {
         List<QueueModal> queues= queueService.getQueueByIdList(queueIds);
         return ResponseEntity.ok(queues);
     }
+    @PutMapping ("/moveQueueByOneStep")
+    public ResponseEntity<QueueModal> moveQueueByOneStep(@RequestParam("queueId")String queueId,
+                                                       @RequestParam ("entityId")String entityId,
+                                                         @RequestParam ("direction") Direction direction){
+        QueueModal queue= queueService.moveQueueForwardByOneStep(queueId,entityId,direction);
+        return ResponseEntity.ok(queue);
+    }
+
+    @PutMapping ("/updateQueueStatus")
+    public ResponseEntity<QueueModal> updateQueueStatus(@RequestParam("queueId")String queueId,
+                                                         @RequestParam ("entityId")String entityId,
+                                                         @RequestParam ("status") Status status){
+        QueueModal queue= queueService.updateQueueStatus(queueId,entityId,status);
+        return ResponseEntity.ok(queue);
+    }
+
+
 }

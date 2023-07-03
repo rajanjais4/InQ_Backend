@@ -77,6 +77,8 @@ public class EntityService {
         if(entityDb==null){
             throw new ApiRequestException("invalid phone number");
         }
+        if(!entityDb.getPassword().equals(entity.getPassword()))
+            throw new ApiRequestException("Invalid password");
         if(entity.getAddress()!=null)
             entityDb.setAddress(entity.getAddress());
         if(entity.getName()!=null)
@@ -91,6 +93,8 @@ public class EntityService {
             entityDb.setType(entity.getType());
         if(entity.getStatus()!=null)
             entityDb.setStatus(entity.getStatus());
+
+//        TODO: Category update need to be added
         return entityRepo.save(entityDb);
     }
     public boolean updateQueueIds(String queueId,String entityId){

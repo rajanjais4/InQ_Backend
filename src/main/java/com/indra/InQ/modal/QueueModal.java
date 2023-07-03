@@ -13,6 +13,7 @@ import java.util.List;
 public class QueueModal extends QueueDescription {
     List<String>userInQueueList=new ArrayList<>();
     List<String>userOutOfQueueList=new ArrayList<>();
+    String entityId;
     @JsonIgnore
     Integer maxUserOutOfQueueListSize=100;
 }
