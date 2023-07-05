@@ -7,6 +7,8 @@ import com.indra.InQ.service.EntityService;
 import com.indra.InQ.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -53,4 +55,5 @@ public class EntityController {
         List<Entity> entityList= entityService.findAll();
         return ResponseEntity.ok(entityList);
     }
+//    WS
 }

@@ -9,6 +9,9 @@ import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,6 +52,13 @@ public class QueueController {
                                                          @RequestParam ("status") Status status){
         QueueModal queue= queueService.updateQueueStatus(queueId,entityId,status);
         return ResponseEntity.ok(queue);
+    }
+
+//      WS
+    @MessageMapping("/moveQueueByOneStepWs")
+    @SendTo("/client/public")
+    public String moveQueueByOneStepWs(@Payload String str){
+        return str;
     }
 
 
