@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class QueueController {
     }
     @GetMapping("/getQueueByIdList")
     public ResponseEntity<List<QueueModal>> getQueueByIdList(@RequestParam("queueId")List<String> queueIds){
+        userFun("server message");
         List<QueueModal> queues= queueService.getQueueByIdList(queueIds);
         return ResponseEntity.ok(queues);
     }
@@ -55,11 +57,22 @@ public class QueueController {
     }
 
 //      WS
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
     @MessageMapping("/moveQueueByOneStepWs")
-    @SendTo("/client/public")
-    public String moveQueueByOneStepWs(@Payload String str){
-        return str;
+    @SendTo("/entity/public")
+    public QueueModal moveQueueByOneStepWs(@Payload String str){
+        System.out.println("moveQueueByOneStepWs hit - "+str);
+        return new QueueModal();
     }
 
-
+    @MessageMapping("/userMessage")
+    public String userFun(@Payload String str){
+        String userId = str;
+        String destination = "/user";
+        String message = "Hello, John!";
+        System.out.println("userMessage userId  - "+userId);
+        simpMessagingTemplate.convertAndSendToUser("abc","/user",message);// /private/abc/user
+        return message;
+    }
 }

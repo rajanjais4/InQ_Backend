@@ -86,7 +86,7 @@ public class QueueService {
                 throw new ApiRequestException("queue description name can not be same");
             nameMap.put(qName,1);
             String qId=common.createQueueId(entityId,qName);
-            if(entity.getQueueIds().contains(qId))
+            if(entity.getQueueIds()!=null && entity.getQueueIds().contains(qId))
                 throw new ApiRequestException("Invalid queue description, queue id already exists in Entity");
             if(getQueueById(qId)!=null)
                 throw new ApiRequestException("Invalid queue description, queue id already exists");

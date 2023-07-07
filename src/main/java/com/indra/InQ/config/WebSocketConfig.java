@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 //        This application receive request to this prefix (controller endpoint prefix)
         registry.setApplicationDestinationPrefixes("/appWs");
 //        This app send response to these prefix
-        registry.enableSimpleBroker("/public", "/entity","/user");
-        registry.setUserDestinationPrefix("/user");
+        registry.enableSimpleBroker("/public", "/entity","/user","/private");
+        registry.setUserDestinationPrefix("/private");
     }
 }

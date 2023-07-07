@@ -57,7 +57,9 @@ public class EntityService {
         String id=common.createPersonId(entity);
         entity.setId(id);
         if(entity.getQueueIds()!=null)
-        entity.getQueueIds().clear();
+            entity.getQueueIds().clear();
+        else
+            entity.setQueueIds(new ArrayList<>());
         entity.setStatus(Status.stopped);
         if(entity.getCategories()!=null){
             entity.getCategories().clear();

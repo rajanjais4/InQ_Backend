@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,7 +33,7 @@ public class Entity {
     private Status status;
     private List<String> categories;
     private Type type;
-    private List<String> queueIds;
+    private List<String> queueIds=new ArrayList<>();
     private String summary;
     private Address address;
 }
