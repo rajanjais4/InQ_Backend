@@ -8,6 +8,7 @@ import com.indra.InQ.modal.common.Direction;
 import com.indra.InQ.modal.common.QueueDescription;
 import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.repository.QueueRepo;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -144,9 +145,7 @@ public class QueueService {
     }
 
 //    Queue update by client
-    private boolean queueUpdateByClientChecks(Entity entity, QueueModal queueModal) {
-        if(entity == null ||queueModal == null )
-            throw new ApiRequestException("entity or queue not exists");
+    private boolean queueUpdateByClientChecks(@NonNull Entity entity,@NonNull QueueModal queueModal) {
         if(!entity.getStatus().equals(Status.running))
             throw new ApiRequestException("This Entity is not in running state");
         String queueId=queueModal.getId();
@@ -157,10 +156,11 @@ public class QueueService {
             throw new ApiRequestException("entityId does not exist in queue");
         return true;
     }
-    private boolean queueMoveUpdateByClientChecks(Entity entity, QueueModal queueModal,Direction direction) {
+    private boolean queueMoveUpdateByClientChecks(@NonNull Entity entity,@NonNull QueueModal queueModal,@NonNull Direction direction) {
         queueUpdateByClientChecks(entity,queueModal);
+
         if(!queueModal.getStatus().equals(Status.running))
-            throw new ApiRequestException("This queue is not in running state");
+            throw new ApiRequestException("This entity/queue is not in running state");
         if(direction.equals(Direction.forward)&&
                 (queueModal.getUserInQueueList()==null
                         || queueModal.getUserInQueueList().size()==0))
@@ -172,7 +172,7 @@ public class QueueService {
         return true;
     }
 
-    public QueueModal moveQueueForwardByOneStep(String queueId, String entityId, Direction direction) {
+    public QueueModal moveQueueForwardByOneStep(@NonNull String queueId,@NonNull String entityId,@NonNull Direction direction) {
         if(direction.equals(Direction.backward)&& !env.getProperty("queue.undo.allowed").equals("true")){
             throw new ApiRequestException("Undo not allowed");
         }
@@ -195,7 +195,7 @@ public class QueueService {
         return queueModalDb;
     }
 
-    public QueueModal updateQueueStatus(String queueId, String entityId, Status status) {
+    public QueueModal updateQueueStatus(@NonNull String queueId, @NonNull String entityId, @NonNull Status status) {
         Entity entity=entityService.findUserByEntityId(entityId);
         QueueModal queueModalDb=getQueueById(queueId);
         queueUpdateByClientChecks(entity,queueModalDb);

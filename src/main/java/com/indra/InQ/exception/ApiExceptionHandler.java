@@ -1,7 +1,12 @@
 package com.indra.InQ.exception;
 
+import com.indra.InQ.common.GenericWebsocketResponse;
+import com.indra.InQ.common.ResponseStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -28,5 +33,17 @@ public class ApiExceptionHandler {
         );
         return apiException;
     }
+
+//    WS
+
+@Autowired
+private SimpMessagingTemplate simpMessagingTemplate;
+@ExceptionHandler(GenricWebsocketException.class)
+@MessageExceptionHandler
+public void handleCustomException(GenricWebsocketException ex) {
+    GenericWebsocketResponse genericWebsocketExceptionResponse=
+            new GenericWebsocketResponse(ex.getId(), ex.getDestination(), ex.getMessage(), ResponseStatus.error);
+    simpMessagingTemplate.convertAndSendToUser(ex.getId(),"/"+ex.getDestination().toString(),genericWebsocketExceptionResponse);
+}
 
 }

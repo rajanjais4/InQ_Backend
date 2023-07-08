@@ -30,8 +30,10 @@ public class Entity {
     private Long phoneNumber;
     @NonNull
     private String password;
+    @NonNull
     private Status status;
     private List<String> categories;
+    @NonNull
     private Type type;
     private List<String> queueIds=new ArrayList<>();
     private String summary;

@@ -6,9 +6,11 @@ import com.indra.InQ.exception.ApiException;
 import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
 import com.indra.InQ.modal.EntityQueueModal;
+import com.indra.InQ.modal.QueueModal;
 import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.modal.common.Type;
 import com.indra.InQ.repository.EntityRepo;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -93,8 +95,6 @@ public class EntityService {
             entityDb.setEmail(entity.getEmail());
         if(entity.getType()!=null)
             entityDb.setType(entity.getType());
-        if(entity.getStatus()!=null)
-            entityDb.setStatus(entity.getStatus());
 
 //        TODO: Category update need to be added
         return entityRepo.save(entityDb);
@@ -136,5 +136,12 @@ public class EntityService {
             return entityQueueModal;
         }
         throw new ApiRequestException("Invalid phone number or password");
+    }
+
+    public Entity updateEntityStatus(@NonNull String entityId, @NonNull Status status) {
+        Entity entityDb=findUserByEntityId(entityId);
+        entityDb.setStatus(status);
+        entityRepo.save(entityDb);
+        return entityDb;
     }
 }
