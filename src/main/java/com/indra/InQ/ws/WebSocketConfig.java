@@ -1,6 +1,5 @@
-package com.indra.InQ.config;
+package com.indra.InQ.ws;
 
-import com.indra.InQ.websocket.GeneralWebSocketHandler;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;

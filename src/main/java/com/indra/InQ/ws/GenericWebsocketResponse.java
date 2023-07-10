@@ -1,5 +1,6 @@
-package com.indra.InQ.common;
+package com.indra.InQ.ws;
 
+import com.indra.InQ.common.ResponseStatus;
 import com.indra.InQ.modal.common.Destination;
 import lombok.Data;
 import lombok.NonNull;

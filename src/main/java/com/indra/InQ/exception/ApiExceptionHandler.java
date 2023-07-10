@@ -1,6 +1,6 @@
 package com.indra.InQ.exception;
 
-import com.indra.InQ.common.GenericWebsocketResponse;
+import com.indra.InQ.ws.GenericWebsocketResponse;
 import com.indra.InQ.common.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
