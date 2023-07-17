@@ -54,7 +54,7 @@ public class QueueControlWs {
             System.out.println("updateQueueStatusWs Input - "+entityQueueUpdateRequestWs.toString());
             QueueModal queue= queueService.updateQueueStatus(entityQueueUpdateRequestWs.getQueueId(),
                     entityQueueUpdateRequestWs.getEntityId(),
-                    entityQueueUpdateRequestWs.getStatus());
+                    entityQueueUpdateRequestWs.getEntityStatus());
 
             GenericWebsocketResponse genericWebsocketResponse=
                     new GenericWebsocketResponse(entityQueueUpdateRequestWs.getEntityId(),

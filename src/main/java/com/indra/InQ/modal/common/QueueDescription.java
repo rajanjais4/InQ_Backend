@@ -14,7 +14,7 @@ public class QueueDescription {
     private String name;
     private Integer queueSize;
     @NonNull
-    private Status status;
+    private EntityStatus entityStatus;
     private Integer startRange;
     private Integer endRange;
     private Integer maxInQueueLimit;

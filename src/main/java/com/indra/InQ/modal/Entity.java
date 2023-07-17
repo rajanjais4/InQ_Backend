@@ -1,7 +1,7 @@
 package com.indra.InQ.modal;
 
 import com.indra.InQ.modal.common.Address;
-import com.indra.InQ.modal.common.Status;
+import com.indra.InQ.modal.common.EntityStatus;
 import com.indra.InQ.modal.common.Type;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,7 +31,7 @@ public class Entity {
     @NonNull
     private String password;
     @NonNull
-    private Status status;
+    private EntityStatus entityStatus;
     private List<String> categories;
     @NonNull
     private Type type;

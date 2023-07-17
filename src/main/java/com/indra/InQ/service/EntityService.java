@@ -1,20 +1,15 @@
 package com.indra.InQ.service;
 
-import ch.qos.logback.core.subst.Token;
 import com.indra.InQ.common.Common;
-import com.indra.InQ.exception.ApiException;
 import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.Entity;
 import com.indra.InQ.modal.EntityQueueModal;
-import com.indra.InQ.modal.QueueModal;
-import com.indra.InQ.modal.common.Status;
+import com.indra.InQ.modal.common.EntityStatus;
 import com.indra.InQ.modal.common.Type;
 import com.indra.InQ.repository.EntityRepo;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -62,7 +57,7 @@ public class EntityService {
             entity.getQueueIds().clear();
         else
             entity.setQueueIds(new ArrayList<>());
-        entity.setStatus(Status.stopped);
+        entity.setEntityStatus(EntityStatus.stopped);
         if(entity.getCategories()!=null){
             entity.getCategories().clear();
         }
@@ -138,9 +133,9 @@ public class EntityService {
         throw new ApiRequestException("Invalid phone number or password");
     }
 
-    public Entity updateEntityStatus(@NonNull String entityId, @NonNull Status status) {
+    public Entity updateEntityStatus(@NonNull String entityId, @NonNull EntityStatus entityStatus) {
         Entity entityDb=findUserByEntityId(entityId);
-        entityDb.setStatus(status);
+        entityDb.setEntityStatus(entityStatus);
         entityRepo.save(entityDb);
         return entityDb;
     }

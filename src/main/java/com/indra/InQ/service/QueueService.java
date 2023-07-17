@@ -6,7 +6,7 @@ import com.indra.InQ.modal.Entity;
 import com.indra.InQ.modal.QueueModal;
 import com.indra.InQ.modal.common.Direction;
 import com.indra.InQ.modal.common.QueueDescription;
-import com.indra.InQ.modal.common.Status;
+import com.indra.InQ.modal.common.EntityStatus;
 import com.indra.InQ.repository.QueueRepo;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class QueueService {
         queueModal.setEndRange(queueDescription.getEndRange());
         queueModal.setMaxInQueueLimit(queueDescription.getMaxInQueueLimit());
         queueModal.setDescription(queueDescription.getDescription());
-        queueModal.setStatus(queueDescription.getStatus());
+        queueModal.setEntityStatus(queueDescription.getEntityStatus());
         queueModal.setCategory(queueDescription.getCategory());
         queueModal.setEntityId(entityId);
 
@@ -107,7 +107,7 @@ public class QueueService {
             String queueId=common.createQueueId(entityId, queueDescriptions.get(i).getName());
             queueDescriptions.get(i).setId(queueId);
             if(queueDescriptions.get(i).getCategory()==null)
-                queueDescriptions.get(i).setStatus(Status.stopped);
+                queueDescriptions.get(i).setEntityStatus(EntityStatus.stopped);
             QueueModal queueModal=createNewQueue(queueDescriptions.get(i),entityId);
             try{
                 entityService.updateQueueIds(queueId,entityId);
@@ -146,7 +146,7 @@ public class QueueService {
 
 //    Queue update by client
     private boolean queueUpdateByClientChecks(@NonNull Entity entity,@NonNull QueueModal queueModal) {
-        if(!entity.getStatus().equals(Status.running))
+        if(!entity.getEntityStatus().equals(EntityStatus.running))
             throw new ApiRequestException("This Entity is not in running state");
         String queueId=queueModal.getId();
         String entityId=entity.getId();
@@ -159,7 +159,7 @@ public class QueueService {
     private boolean queueMoveUpdateByClientChecks(@NonNull Entity entity,@NonNull QueueModal queueModal,@NonNull Direction direction) {
         queueUpdateByClientChecks(entity,queueModal);
 
-        if(!queueModal.getStatus().equals(Status.running))
+        if(!queueModal.getEntityStatus().equals(EntityStatus.running))
             throw new ApiRequestException("This entity/queue is not in running state");
         if(direction.equals(Direction.forward)&&
                 (queueModal.getUserInQueueList()==null
@@ -195,11 +195,11 @@ public class QueueService {
         return queueModalDb;
     }
 
-    public QueueModal updateQueueStatus(@NonNull String queueId, @NonNull String entityId, @NonNull Status status) {
+    public QueueModal updateQueueStatus(@NonNull String queueId, @NonNull String entityId, @NonNull EntityStatus entityStatus) {
         Entity entity=entityService.findUserByEntityId(entityId);
         QueueModal queueModalDb=getQueueById(queueId);
         queueUpdateByClientChecks(entity,queueModalDb);
-        queueModalDb.setStatus(status);
+        queueModalDb.setEntityStatus(entityStatus);
         saveQueue(queueModalDb);
         return queueModalDb;
     }

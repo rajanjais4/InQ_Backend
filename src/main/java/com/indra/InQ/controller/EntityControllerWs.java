@@ -25,7 +25,7 @@ public class EntityControllerWs {
         try {
             System.out.println("updateEntityStatusWs Input - "+entityQueueUpdateRequestWs.toString());
             Entity entity= entityService.updateEntityStatus(entityQueueUpdateRequestWs.getEntityId(),
-                    entityQueueUpdateRequestWs.getStatus());
+                    entityQueueUpdateRequestWs.getEntityStatus());
 
             GenericWebsocketResponse genericWebsocketResponse=
                     new GenericWebsocketResponse(entityQueueUpdateRequestWs.getEntityId(),
