@@ -1,4 +1,4 @@
-package com.indra.InQ.modal.ws;
+package com.indra.InQ.modal.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,7 +1,6 @@
-package com.indra.InQ.modal;
+package com.indra.InQ.modal.queue;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.indra.InQ.modal.common.QueueDescription;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +13,7 @@ public class QueueModal extends QueueDescription {
     List<String>userInQueueList=new ArrayList<>();
     List<String>userOutOfQueueList=new ArrayList<>();
     String entityId;
+    private Integer queueMovingRateInSeconds;
     @JsonIgnore
     Integer maxUserOutOfQueueListSize=100;
 }

@@ -1,8 +1,7 @@
-package com.indra.InQ.modal;
+package com.indra.InQ.modal.entity;
 
 import com.indra.InQ.modal.common.Address;
-import com.indra.InQ.modal.common.EntityStatus;
-import com.indra.InQ.modal.common.Type;
+import com.indra.InQ.modal.common.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,16 +24,16 @@ public class Entity {
     @Indexed()
     private String name;
     private String email;
-    @Indexed()
+    @Indexed(unique = true)
     @NonNull
     private Long phoneNumber;
     @NonNull
     private String password;
     @NonNull
-    private EntityStatus entityStatus;
+    private Status status;
     private List<String> categories;
     @NonNull
-    private Type type;
+    private EntityType entityType;
     private List<String> queueIds=new ArrayList<>();
     private String summary;
     private Address address;

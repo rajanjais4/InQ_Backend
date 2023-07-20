@@ -2,11 +2,12 @@ package com.indra.InQ.service;
 
 import com.indra.InQ.common.Common;
 import com.indra.InQ.exception.ApiRequestException;
-import com.indra.InQ.modal.Entity;
-import com.indra.InQ.modal.EntityQueueModal;
-import com.indra.InQ.modal.common.EntityStatus;
-import com.indra.InQ.modal.common.Type;
+import com.indra.InQ.modal.entity.Entity;
+import com.indra.InQ.modal.entity.EntityQueueModal;
+import com.indra.InQ.modal.common.Status;
+import com.indra.InQ.modal.entity.EntityType;
 import com.indra.InQ.repository.EntityRepo;
+import com.indra.InQ.service.queueService.QueueService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -48,16 +49,16 @@ public class EntityService {
             throw new ApiRequestException(msg);
         }
         System.out.println("Saving New User");
-        if(entity.getType()==null){
-            entity.setType(Type.valueOf(env.getProperty("entity.type.default")));
+        if(entity.getEntityType()==null){
+            entity.setEntityType(EntityType.valueOf(env.getProperty("entity.entityType.default")));
         }
-        String id=common.createPersonId(entity);
+        String id=common.createEntityId(entity);
         entity.setId(id);
         if(entity.getQueueIds()!=null)
             entity.getQueueIds().clear();
         else
             entity.setQueueIds(new ArrayList<>());
-        entity.setEntityStatus(EntityStatus.stopped);
+        entity.setStatus(Status.stopped);
         if(entity.getCategories()!=null){
             entity.getCategories().clear();
         }
@@ -88,8 +89,8 @@ public class EntityService {
             entityDb.setSummary(entity.getSummary());
         if(entity.getEmail()!=null)
             entityDb.setEmail(entity.getEmail());
-        if(entity.getType()!=null)
-            entityDb.setType(entity.getType());
+        if(entity.getEntityType()!=null)
+            entityDb.setEntityType(entity.getEntityType());
 
 //        TODO: Category update need to be added
         return entityRepo.save(entityDb);
@@ -133,9 +134,9 @@ public class EntityService {
         throw new ApiRequestException("Invalid phone number or password");
     }
 
-    public Entity updateEntityStatus(@NonNull String entityId, @NonNull EntityStatus entityStatus) {
+    public Entity updateEntityStatus(@NonNull String entityId, @NonNull Status status) {
         Entity entityDb=findUserByEntityId(entityId);
-        entityDb.setEntityStatus(entityStatus);
+        entityDb.setStatus(status);
         entityRepo.save(entityDb);
         return entityDb;
     }

@@ -3,9 +3,9 @@ package com.indra.InQ.controller;
 import com.indra.InQ.ws.GenericWebsocketResponse;
 import com.indra.InQ.common.ResponseStatus;
 import com.indra.InQ.exception.GenricWebsocketException;
-import com.indra.InQ.modal.Entity;
+import com.indra.InQ.modal.entity.Entity;
 import com.indra.InQ.modal.common.Destination;
-import com.indra.InQ.modal.ws.EntityQueueUpdateRequestWs;
+import com.indra.InQ.modal.entity.EntityQueueUpdateRequestWs;
 import com.indra.InQ.service.EntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -25,7 +25,7 @@ public class EntityControllerWs {
         try {
             System.out.println("updateEntityStatusWs Input - "+entityQueueUpdateRequestWs.toString());
             Entity entity= entityService.updateEntityStatus(entityQueueUpdateRequestWs.getEntityId(),
-                    entityQueueUpdateRequestWs.getEntityStatus());
+                    entityQueueUpdateRequestWs.getStatus());
 
             GenericWebsocketResponse genericWebsocketResponse=
                     new GenericWebsocketResponse(entityQueueUpdateRequestWs.getEntityId(),

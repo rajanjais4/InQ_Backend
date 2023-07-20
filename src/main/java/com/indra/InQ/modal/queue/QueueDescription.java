@@ -1,5 +1,6 @@
-package com.indra.InQ.modal.common;
+package com.indra.InQ.modal.queue;
 
+import com.indra.InQ.modal.common.Status;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
@@ -14,7 +15,7 @@ public class QueueDescription {
     private String name;
     private Integer queueSize;
     @NonNull
-    private EntityStatus entityStatus;
+    private Status status;
     private Integer startRange;
     private Integer endRange;
     private Integer maxInQueueLimit;

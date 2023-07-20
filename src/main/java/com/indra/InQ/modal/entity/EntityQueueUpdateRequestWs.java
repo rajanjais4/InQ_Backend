@@ -1,7 +1,7 @@
-package com.indra.InQ.modal.ws;
+package com.indra.InQ.modal.entity;
 
 import com.indra.InQ.modal.common.Direction;
-import com.indra.InQ.modal.common.EntityStatus;
+import com.indra.InQ.modal.common.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +15,5 @@ public class EntityQueueUpdateRequestWs {
     private String entityId;
     private String queueId;
     private Direction moveDirection;
-    private EntityStatus entityStatus;
+    private Status status;
 }

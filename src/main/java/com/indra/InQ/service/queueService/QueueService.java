@@ -1,18 +1,24 @@
-package com.indra.InQ.service;
+package com.indra.InQ.service.queueService;
 
 import com.indra.InQ.common.Common;
 import com.indra.InQ.exception.ApiRequestException;
-import com.indra.InQ.modal.Entity;
-import com.indra.InQ.modal.QueueModal;
+import com.indra.InQ.modal.entity.Entity;
+import com.indra.InQ.modal.queue.QueueModal;
 import com.indra.InQ.modal.common.Direction;
-import com.indra.InQ.modal.common.QueueDescription;
-import com.indra.InQ.modal.common.EntityStatus;
+import com.indra.InQ.modal.common.Status;
+import com.indra.InQ.modal.queue.QueueDescription;
+import com.indra.InQ.modal.user.UserAction;
+import com.indra.InQ.modal.user.UserQueueInfo;
+import com.indra.InQ.modal.user.UserStatus;
+import com.indra.InQ.modal.user.response.UserQueueUpdateResponse;
 import com.indra.InQ.repository.QueueRepo;
+import com.indra.InQ.service.EntityService;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -27,6 +33,9 @@ public class QueueService {
     private Environment env;
     @Autowired
     Common common;
+
+    @Autowired
+    QueueUpdateService queueUpdateService;
     private void saveQueue(QueueModal queueModal){
         try{
             queueRepo.save(queueModal);
@@ -43,7 +52,7 @@ public class QueueService {
         queueModal.setEndRange(queueDescription.getEndRange());
         queueModal.setMaxInQueueLimit(queueDescription.getMaxInQueueLimit());
         queueModal.setDescription(queueDescription.getDescription());
-        queueModal.setEntityStatus(queueDescription.getEntityStatus());
+        queueModal.setStatus(queueDescription.getStatus());
         queueModal.setCategory(queueDescription.getCategory());
         queueModal.setEntityId(entityId);
 
@@ -107,7 +116,7 @@ public class QueueService {
             String queueId=common.createQueueId(entityId, queueDescriptions.get(i).getName());
             queueDescriptions.get(i).setId(queueId);
             if(queueDescriptions.get(i).getCategory()==null)
-                queueDescriptions.get(i).setEntityStatus(EntityStatus.stopped);
+                queueDescriptions.get(i).setStatus(Status.stopped);
             QueueModal queueModal=createNewQueue(queueDescriptions.get(i),entityId);
             try{
                 entityService.updateQueueIds(queueId,entityId);
@@ -145,8 +154,8 @@ public class QueueService {
     }
 
 //    Queue update by client
-    private boolean queueUpdateByClientChecks(@NonNull Entity entity,@NonNull QueueModal queueModal) {
-        if(!entity.getEntityStatus().equals(EntityStatus.running))
+    private boolean queueUpdateSanityChecks(@NonNull Entity entity, @NonNull QueueModal queueModal) {
+        if(!entity.getStatus().equals(Status.running))
             throw new ApiRequestException("This Entity is not in running state");
         String queueId=queueModal.getId();
         String entityId=entity.getId();
@@ -157,9 +166,9 @@ public class QueueService {
         return true;
     }
     private boolean queueMoveUpdateByClientChecks(@NonNull Entity entity,@NonNull QueueModal queueModal,@NonNull Direction direction) {
-        queueUpdateByClientChecks(entity,queueModal);
+        queueUpdateSanityChecks(entity,queueModal);
 
-        if(!queueModal.getEntityStatus().equals(EntityStatus.running))
+        if(!queueModal.getStatus().equals(Status.running))
             throw new ApiRequestException("This entity/queue is not in running state");
         if(direction.equals(Direction.forward)&&
                 (queueModal.getUserInQueueList()==null
@@ -195,13 +204,44 @@ public class QueueService {
         return queueModalDb;
     }
 
-    public QueueModal updateQueueStatus(@NonNull String queueId, @NonNull String entityId, @NonNull EntityStatus entityStatus) {
+    public QueueModal updateQueueStatus(@NonNull String queueId, @NonNull String entityId, @NonNull Status status) {
         Entity entity=entityService.findUserByEntityId(entityId);
         QueueModal queueModalDb=getQueueById(queueId);
-        queueUpdateByClientChecks(entity,queueModalDb);
-        queueModalDb.setEntityStatus(entityStatus);
+        queueUpdateSanityChecks(entity,queueModalDb);
+        queueModalDb.setStatus(status);
         saveQueue(queueModalDb);
         return queueModalDb;
+    }
+
+    public UserQueueUpdateResponse updateQueueByUserAction(@NonNull UserQueueInfo userQueueInfo,@NonNull String userId, @NonNull UserAction userAction) {
+        QueueModal queueModal=getQueueById(userQueueInfo.getQueueId());
+        Entity entity=entityService.findUserByEntityId(queueModal.getEntityId());
+        queueUpdateSanityChecks(entity,queueModal);
+        if(userAction.equals(UserAction.add))
+            queueUpdateService.addUserAtLast();
+        if(queueModal.getUserInQueueList()==null)
+            queueModal.setUserInQueueList(new ArrayList<>());
+        if(queueModal.getUserInQueueList().contains(userId)) {
+            if(userAction.equals(UserAction.add))
+            throw new ApiRequestException("User already in queue");
+        }
+        else if(!userAction.equals(UserAction.add)) {
+            throw new ApiRequestException("User not in queue");
+        }
+        if(userAction.equals(UserAction.add))
+        queueModal.getUserInQueueList().add(userId);
+
+        queueModal=queueUpdateService.postQueueUserUpdate(queueModal);
+        saveQueue(queueModal);
+        UserStatus userStatusUpdate=queueUpdateService.getUserStatusInQueue(userId,queueModal);
+        if(!userStatusUpdate.equals(userQueueInfo.getUserStatus())){
+            userQueueInfo.setUserStatus(userStatusUpdate);
+            userQueueInfo.setUserStatusChangeEpoch(Instant.now().getEpochSecond());
+        }
+        return new UserQueueUpdateResponse(userId,
+                userQueueInfo,
+                queueModal.getQueueMovingRateInSeconds(),
+                queueModal.getUserInQueueList().size());
     }
     //    Queue update by client
 }

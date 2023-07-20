@@ -1,9 +1,8 @@
 package com.indra.InQ.controller;
 
-import com.indra.InQ.modal.Entity;
-import com.indra.InQ.modal.EntityQueueModal;
+import com.indra.InQ.modal.entity.Entity;
+import com.indra.InQ.modal.entity.EntityQueueModal;
 import com.indra.InQ.service.EntityService;
-import com.indra.InQ.service.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

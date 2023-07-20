@@ -3,10 +3,10 @@ package com.indra.InQ.controller;
 import com.indra.InQ.ws.GenericWebsocketResponse;
 import com.indra.InQ.common.ResponseStatus;
 import com.indra.InQ.exception.GenricWebsocketException;
-import com.indra.InQ.modal.QueueModal;
+import com.indra.InQ.modal.queue.QueueModal;
 import com.indra.InQ.modal.common.Destination;
-import com.indra.InQ.modal.ws.EntityQueueUpdateRequestWs;
-import com.indra.InQ.service.QueueService;
+import com.indra.InQ.modal.entity.EntityQueueUpdateRequestWs;
+import com.indra.InQ.service.queueService.QueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -54,7 +54,7 @@ public class QueueControlWs {
             System.out.println("updateQueueStatusWs Input - "+entityQueueUpdateRequestWs.toString());
             QueueModal queue= queueService.updateQueueStatus(entityQueueUpdateRequestWs.getQueueId(),
                     entityQueueUpdateRequestWs.getEntityId(),
-                    entityQueueUpdateRequestWs.getEntityStatus());
+                    entityQueueUpdateRequestWs.getStatus());
 
             GenericWebsocketResponse genericWebsocketResponse=
                     new GenericWebsocketResponse(entityQueueUpdateRequestWs.getEntityId(),

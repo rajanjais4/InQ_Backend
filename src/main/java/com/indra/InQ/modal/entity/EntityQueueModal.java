@@ -1,8 +1,8 @@
-package com.indra.InQ.modal;
+package com.indra.InQ.modal.entity;
 
+import com.indra.InQ.modal.queue.QueueModal;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
