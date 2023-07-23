@@ -61,10 +61,10 @@ public class QueueService {
         queueModal=queueCommonServices.initilizeQueueLists(queueModal);
 
         //            TODO: remove below test code
-        queueModal.getUserInQueueList().add("user1");
-        queueModal.getUserInQueueList().add("user2");
-        queueModal.getUserInEntityList().add("user3");
-        queueModal.getUserInEntityList().add("user4");
+//        queueModal.getUserInQueueList().add("user1");
+//        queueModal.getUserInQueueList().add("user2");
+//        queueModal.getUserInEntityList().add("user3");
+//        queueModal.getUserInEntityList().add("user4");
 //            TODO: remove above test code
 
         saveQueue(queueModal);
@@ -208,6 +208,7 @@ public class QueueService {
             userQueueInfo.setUserStatusChangeEpoch(Instant.now().getEpochSecond());
         }
         return new UserQueueUpdateResponse(userId,
+                userQueueInfo.getQueueId(),
                 userQueueInfo,
                 queueModal.getQueueMovingRateInSeconds(),
                 queueModal.getUserInQueueList().size(),

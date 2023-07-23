@@ -1,4 +1,4 @@
-package com.indra.InQ.ws;
+package com.indra.InQ.ws.response;
 
 import com.indra.InQ.common.ResponseStatus;
 import com.indra.InQ.modal.common.Destination;
@@ -19,20 +19,20 @@ public class GenericWebsocketResponse {
     @NonNull
     private ResponseStatus responseStatus;
     @NonNull
-    private Long epochTime;
+    private Long responseSendEpoch;
     public GenericWebsocketResponse(String id, Destination destination, Object messageBody , ResponseStatus responseStatus,String description){
         this.id=id;
         this.destination=destination;
         this.messageBody=messageBody;
         this.description=description;
         this.responseStatus=responseStatus;
-        epochTime= Instant.now().getEpochSecond();
+        responseSendEpoch= Instant.now().getEpochSecond();
     }
     public GenericWebsocketResponse(String id, Destination destination, Object messageBody ,ResponseStatus responseStatus){
         this.id=id;
         this.destination=destination;
         this.messageBody=messageBody;
         this.responseStatus=responseStatus;
-        epochTime= Instant.now().getEpochSecond();
+        responseSendEpoch= Instant.now().getEpochSecond();
     }
 }

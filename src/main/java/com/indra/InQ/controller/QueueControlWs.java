@@ -1,13 +1,13 @@
 package com.indra.InQ.controller;
 
-import com.indra.InQ.ws.GenericWebsocketResponse;
 import com.indra.InQ.common.ResponseStatus;
 import com.indra.InQ.exception.GenricWebsocketException;
 import com.indra.InQ.modal.queue.QueueModal;
 import com.indra.InQ.modal.common.Destination;
 import com.indra.InQ.modal.entity.EntityQueueUpdateRequestWs;
 import com.indra.InQ.service.queueService.QueueService;
-import com.indra.InQ.ws.WsResponseManager;
+import com.indra.InQ.ws.response.WsResponseManager;
+import com.indra.InQ.ws.response.WsUserResponseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -22,6 +22,9 @@ public class QueueControlWs {
     QueueService queueService;
     @Autowired
     WsResponseManager wsResponseManager;
+
+    @Autowired
+    WsUserResponseManager wsUserResponseManager;
     @MessageMapping("/moveQueueByOneStepWs")
     public void moveQueueByOneStepWs(@Payload EntityQueueUpdateRequestWs entityQueueUpdateRequestWs){
         System.out.println("moveQueueByOneStepWs Input - "+entityQueueUpdateRequestWs.toString());
@@ -59,7 +62,7 @@ public class QueueControlWs {
                             Destination.entityQueueUpdate,
                             queue,
                             ResponseStatus.success);
-
+            wsUserResponseManager.sendMandatoryResponseToAllUserInQueue(queue);
         }
         catch (Exception e){
 //            TODO: send error message by session ID

@@ -1,13 +1,13 @@
 package com.indra.InQ.controller;
 
-import com.indra.InQ.ws.GenericWebsocketResponse;
 import com.indra.InQ.common.ResponseStatus;
 import com.indra.InQ.exception.GenricWebsocketException;
 import com.indra.InQ.modal.entity.Entity;
 import com.indra.InQ.modal.common.Destination;
 import com.indra.InQ.modal.entity.EntityQueueUpdateRequestWs;
 import com.indra.InQ.service.EntityService;
-import com.indra.InQ.ws.WsResponseManager;
+import com.indra.InQ.ws.response.WsResponseManager;
+import com.indra.InQ.ws.response.WsUserResponseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -23,6 +23,8 @@ public class EntityControllerWs {
     private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     WsResponseManager wsResponseManager;
+    @Autowired
+    WsUserResponseManager wsUserResponseManager;
     @MessageMapping("/updateEntityStatusWs")
     public void updateEntityStatusWs(@Payload EntityQueueUpdateRequestWs entityQueueUpdateRequestWs){
         try {
@@ -33,7 +35,7 @@ public class EntityControllerWs {
                             Destination.entityUpdate,
                             entity,
                             ResponseStatus.success);
-
+            wsUserResponseManager.sendMandatoryResponseToAllUserInEntity(entity);
         }
         catch (Exception e){
 //            TODO: send error message by session ID

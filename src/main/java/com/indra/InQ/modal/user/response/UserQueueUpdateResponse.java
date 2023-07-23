@@ -14,9 +14,11 @@ public class UserQueueUpdateResponse {
     @NonNull
     private String userId;
     @NonNull
+    private String queueId;
     private UserQueueInfo userQueueInfo;
     private Integer queueMovingRateInSeconds;
     @NonNull
     private Integer queuePosition;
+    @NonNull
     private Status queueStatus;
 }
