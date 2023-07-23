@@ -2,14 +2,14 @@ package com.indra.InQ.service.queueService;
 
 import com.indra.InQ.exception.ApiRequestException;
 import com.indra.InQ.modal.queue.QueueModal;
+import com.indra.InQ.modal.user.UserAction;
 import com.indra.InQ.modal.user.UserStatus;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QueueUpdateService {
-    public void addUserAtLast() {
-    }
+    UserAction userAction;
 
     public QueueModal postQueueUserUpdate(QueueModal queueModal) {
         queueModal.setQueueMovingRateInSeconds(500);
@@ -17,16 +17,29 @@ public class QueueUpdateService {
     }
     public UserStatus getUserStatusInQueue(@NonNull String userId, @NonNull QueueModal queueModal) {
         if((queueModal.getUserInQueueList()==null&&
-                queueModal.getUserOutOfQueueList()==null) ||
-                (queueModal.getUserOutOfQueueList().contains(userId)==false &&
+                queueModal.getUserInEntityList()==null) ||
+                (queueModal.getUserInEntityList().contains(userId)==false &&
                         queueModal.getUserInQueueList().contains(userId)==false))
             throw new ApiRequestException("userId not exists in queue");
-        if(queueModal.getUserOutOfQueueList().contains(userId))
+        if(queueModal.getUserInEntityList().contains(userId))
             return UserStatus.inEntity;
-        else if(queueModal.getUserInQueueList().contains(userId)==false)
-            return UserStatus.outQueue;
-        else if(queueModal.getUserInQueueList().indexOf(userId)+1<=3)
+        else if(queueModal.getUserInQueueList().contains(userId))
+            return UserStatus.inQueue;
+        else if(queueModal.getUserWithQrGenerated().contains(userId))
             return UserStatus.readyToGo;
-        return UserStatus.inQueue;
+        return UserStatus.outQueue;
+    }
+
+    public QueueModal addNewUserInQueue(QueueModal queueModal, String userId) {
+        if(queueModal.getUserInQueueList().contains(userId)
+                || queueModal.getUserWithQrGenerated().contains(userId)) {
+            if(userAction.equals(UserAction.add))
+                throw new ApiRequestException("User already in queue");
+        }
+        if(queueModal.getUserWithQrGenerated().size()<3&&queueModal.getUserInQueueList().size()==0)
+            queueModal.getUserWithQrGenerated().add(userId);
+        else
+            queueModal.getUserInQueueList().add(userId);
+        return queueModal;
     }
 }

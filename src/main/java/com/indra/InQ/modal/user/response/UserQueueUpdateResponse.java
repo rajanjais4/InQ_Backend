@@ -1,5 +1,6 @@
 package com.indra.InQ.modal.user.response;
 
+import com.indra.InQ.modal.common.Status;
 import com.indra.InQ.modal.user.UserQueueInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class UserQueueUpdateResponse {
     private Integer queueMovingRateInSeconds;
     @NonNull
     private Integer queuePosition;
+    private Status queueStatus;
 }

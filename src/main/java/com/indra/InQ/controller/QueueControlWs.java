@@ -7,6 +7,7 @@ import com.indra.InQ.modal.queue.QueueModal;
 import com.indra.InQ.modal.common.Destination;
 import com.indra.InQ.modal.entity.EntityQueueUpdateRequestWs;
 import com.indra.InQ.service.queueService.QueueService;
+import com.indra.InQ.ws.WsResponseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -19,6 +20,8 @@ public class QueueControlWs {
     private SimpMessagingTemplate simpMessagingTemplate;
     @Autowired
     QueueService queueService;
+    @Autowired
+    WsResponseManager wsResponseManager;
     @MessageMapping("/moveQueueByOneStepWs")
     public void moveQueueByOneStepWs(@Payload EntityQueueUpdateRequestWs entityQueueUpdateRequestWs){
         System.out.println("moveQueueByOneStepWs Input - "+entityQueueUpdateRequestWs.toString());
@@ -28,15 +31,11 @@ public class QueueControlWs {
                     entityQueueUpdateRequestWs.getEntityId(),
                     entityQueueUpdateRequestWs.getMoveDirection());
 
-            GenericWebsocketResponse genericWebsocketResponse=
-                    new GenericWebsocketResponse(entityQueueUpdateRequestWs.getEntityId(),
-                            Destination.entityQueueUpdate,
-                            queue,
-                            ResponseStatus.success);
-
-            simpMessagingTemplate.convertAndSendToUser(genericWebsocketResponse.getId(),
-                    "/"+ genericWebsocketResponse.getDestination(),
-                    genericWebsocketResponse);
+            // Entity Response
+            wsResponseManager.sendGenericResponse(entityQueueUpdateRequestWs.getEntityId(),
+                    Destination.entityQueueUpdate,
+                    queue,
+                    ResponseStatus.success);
 //        TODO: implement - update send to user
         }
         catch (Exception e){
@@ -56,15 +55,10 @@ public class QueueControlWs {
                     entityQueueUpdateRequestWs.getEntityId(),
                     entityQueueUpdateRequestWs.getStatus());
 
-            GenericWebsocketResponse genericWebsocketResponse=
-                    new GenericWebsocketResponse(entityQueueUpdateRequestWs.getEntityId(),
+            wsResponseManager.sendGenericResponse(entityQueueUpdateRequestWs.getEntityId(),
                             Destination.entityQueueUpdate,
                             queue,
                             ResponseStatus.success);
-
-            simpMessagingTemplate.convertAndSendToUser(genericWebsocketResponse.getId(),
-                    "/"+ genericWebsocketResponse.getDestination(),
-                    genericWebsocketResponse);
 
         }
         catch (Exception e){

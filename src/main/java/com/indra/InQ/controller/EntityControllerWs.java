@@ -7,6 +7,7 @@ import com.indra.InQ.modal.entity.Entity;
 import com.indra.InQ.modal.common.Destination;
 import com.indra.InQ.modal.entity.EntityQueueUpdateRequestWs;
 import com.indra.InQ.service.EntityService;
+import com.indra.InQ.ws.WsResponseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,22 +21,18 @@ public class EntityControllerWs {
     EntityService entityService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    WsResponseManager wsResponseManager;
     @MessageMapping("/updateEntityStatusWs")
     public void updateEntityStatusWs(@Payload EntityQueueUpdateRequestWs entityQueueUpdateRequestWs){
         try {
             System.out.println("updateEntityStatusWs Input - "+entityQueueUpdateRequestWs.toString());
             Entity entity= entityService.updateEntityStatus(entityQueueUpdateRequestWs.getEntityId(),
                     entityQueueUpdateRequestWs.getStatus());
-
-            GenericWebsocketResponse genericWebsocketResponse=
-                    new GenericWebsocketResponse(entityQueueUpdateRequestWs.getEntityId(),
+            wsResponseManager.sendGenericResponse(entityQueueUpdateRequestWs.getEntityId(),
                             Destination.entityUpdate,
                             entity,
                             ResponseStatus.success);
-
-            simpMessagingTemplate.convertAndSendToUser(genericWebsocketResponse.getId(),
-                    "/"+ genericWebsocketResponse.getDestination(),
-                    genericWebsocketResponse);
 
         }
         catch (Exception e){

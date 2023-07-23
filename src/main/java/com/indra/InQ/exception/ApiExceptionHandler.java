@@ -43,7 +43,7 @@ private SimpMessagingTemplate simpMessagingTemplate;
 public void handleCustomException(GenricWebsocketException ex) {
     GenericWebsocketResponse genericWebsocketExceptionResponse=
             new GenericWebsocketResponse(ex.getId(), ex.getDestination(), ex.getMessage(), ResponseStatus.error);
-    simpMessagingTemplate.convertAndSendToUser(ex.getId(),"/"+ex.getDestination().toString(),genericWebsocketExceptionResponse);
+    simpMessagingTemplate.convertAndSendToUser(ex.getId(),"/"+ex.getDestination(),genericWebsocketExceptionResponse);
 }
 
 }

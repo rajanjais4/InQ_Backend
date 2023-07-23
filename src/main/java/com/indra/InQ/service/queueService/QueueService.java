@@ -33,6 +33,8 @@ public class QueueService {
     private Environment env;
     @Autowired
     Common common;
+    @Autowired
+    QueueCommonServices queueCommonServices;
 
     @Autowired
     QueueUpdateService queueUpdateService;
@@ -56,11 +58,13 @@ public class QueueService {
         queueModal.setCategory(queueDescription.getCategory());
         queueModal.setEntityId(entityId);
 
+        queueModal=queueCommonServices.initilizeQueueLists(queueModal);
+
         //            TODO: remove below test code
         queueModal.getUserInQueueList().add("user1");
         queueModal.getUserInQueueList().add("user2");
-        queueModal.getUserOutOfQueueList().add("user3");
-        queueModal.getUserOutOfQueueList().add("user4");
+        queueModal.getUserInEntityList().add("user3");
+        queueModal.getUserInEntityList().add("user4");
 //            TODO: remove above test code
 
         saveQueue(queueModal);
@@ -153,52 +157,24 @@ public class QueueService {
         }
     }
 
-//    Queue update by client
-    private boolean queueUpdateSanityChecks(@NonNull Entity entity, @NonNull QueueModal queueModal) {
-        if(!entity.getStatus().equals(Status.running))
-            throw new ApiRequestException("This Entity is not in running state");
-        String queueId=queueModal.getId();
-        String entityId=entity.getId();
-        if ( entity.getQueueIds().contains(queueId) == false)
-            throw new ApiRequestException("queueId does not exist in entity");
-        if ( queueModal.getEntityId().equals(entityId) == false)
-            throw new ApiRequestException("entityId does not exist in queue");
-        return true;
-    }
-    private boolean queueMoveUpdateByClientChecks(@NonNull Entity entity,@NonNull QueueModal queueModal,@NonNull Direction direction) {
-        queueUpdateSanityChecks(entity,queueModal);
-
-        if(!queueModal.getStatus().equals(Status.running))
-            throw new ApiRequestException("This entity/queue is not in running state");
-        if(direction.equals(Direction.forward)&&
-                (queueModal.getUserInQueueList()==null
-                        || queueModal.getUserInQueueList().size()==0))
-            throw new ApiRequestException("Unable to move queue forward,no user in queue");
-        if(direction.equals(Direction.backward)&&
-                (queueModal.getUserOutOfQueueList()==null
-                        || queueModal.getUserOutOfQueueList().size()==0))
-            throw new ApiRequestException("Unable to move queue backward,no user in out-queue");
-        return true;
-    }
-
     public QueueModal moveQueueForwardByOneStep(@NonNull String queueId,@NonNull String entityId,@NonNull Direction direction) {
         if(direction.equals(Direction.backward)&& !env.getProperty("queue.undo.allowed").equals("true")){
             throw new ApiRequestException("Undo not allowed");
         }
         Entity entity=entityService.findUserByEntityId(entityId);
         QueueModal queueModalDb=getQueueById(queueId);
-        queueMoveUpdateByClientChecks(entity,queueModalDb,direction);
+        queueCommonServices.runningQueueMoveUpdateByClientChecks(entity,queueModalDb,direction);
         if(direction.equals(Direction.forward)){
-            queueModalDb.getUserOutOfQueueList().add(
+            queueModalDb.getUserInEntityList().add(
                     queueModalDb.getUserInQueueList().get(0)
             );
             queueModalDb.getUserInQueueList().remove(0);
         }
         else if(direction.equals(Direction.backward)){
-            Integer userOutOfQueueListSize=queueModalDb.getUserOutOfQueueList().size();
+            Integer userOutOfQueueListSize=queueModalDb.getUserInEntityList().size();
             queueModalDb.getUserInQueueList().add(0,
-                    queueModalDb.getUserOutOfQueueList().get(userOutOfQueueListSize-1));
-            queueModalDb.getUserOutOfQueueList().remove(userOutOfQueueListSize-1);
+                    queueModalDb.getUserInEntityList().get(userOutOfQueueListSize-1));
+            queueModalDb.getUserInEntityList().remove(userOutOfQueueListSize-1);
         }
         saveQueue(queueModalDb);
         return queueModalDb;
@@ -207,7 +183,9 @@ public class QueueService {
     public QueueModal updateQueueStatus(@NonNull String queueId, @NonNull String entityId, @NonNull Status status) {
         Entity entity=entityService.findUserByEntityId(entityId);
         QueueModal queueModalDb=getQueueById(queueId);
-        queueUpdateSanityChecks(entity,queueModalDb);
+        queueCommonServices.queueSanityCheck(entity,queueModalDb);
+        if(!entity.getStatus().equals(Status.running) && !status.equals(entity.getStatus()))
+            throw new ApiRequestException("Can not update queue status as entity not in running state");
         queueModalDb.setStatus(status);
         saveQueue(queueModalDb);
         return queueModalDb;
@@ -216,20 +194,11 @@ public class QueueService {
     public UserQueueUpdateResponse updateQueueByUserAction(@NonNull UserQueueInfo userQueueInfo,@NonNull String userId, @NonNull UserAction userAction) {
         QueueModal queueModal=getQueueById(userQueueInfo.getQueueId());
         Entity entity=entityService.findUserByEntityId(queueModal.getEntityId());
-        queueUpdateSanityChecks(entity,queueModal);
+        queueCommonServices.runningQueueUpdateSanityChecks(entity,queueModal);
+        queueModal=queueCommonServices.initilizeQueueLists(queueModal);
+
         if(userAction.equals(UserAction.add))
-            queueUpdateService.addUserAtLast();
-        if(queueModal.getUserInQueueList()==null)
-            queueModal.setUserInQueueList(new ArrayList<>());
-        if(queueModal.getUserInQueueList().contains(userId)) {
-            if(userAction.equals(UserAction.add))
-            throw new ApiRequestException("User already in queue");
-        }
-        else if(!userAction.equals(UserAction.add)) {
-            throw new ApiRequestException("User not in queue");
-        }
-        if(userAction.equals(UserAction.add))
-        queueModal.getUserInQueueList().add(userId);
+            queueModal=queueUpdateService.addNewUserInQueue(queueModal,userId);
 
         queueModal=queueUpdateService.postQueueUserUpdate(queueModal);
         saveQueue(queueModal);
@@ -241,7 +210,8 @@ public class QueueService {
         return new UserQueueUpdateResponse(userId,
                 userQueueInfo,
                 queueModal.getQueueMovingRateInSeconds(),
-                queueModal.getUserInQueueList().size());
+                queueModal.getUserInQueueList().size(),
+                queueModal.getStatus());
     }
     //    Queue update by client
 }

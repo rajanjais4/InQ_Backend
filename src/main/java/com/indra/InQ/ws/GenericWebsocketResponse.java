@@ -5,6 +5,8 @@ import com.indra.InQ.modal.common.Destination;
 import lombok.Data;
 import lombok.NonNull;
 
+import java.time.Instant;
+
 @Data
 public class GenericWebsocketResponse {
     @NonNull
@@ -16,17 +18,21 @@ public class GenericWebsocketResponse {
     private String description="";
     @NonNull
     private ResponseStatus responseStatus;
+    @NonNull
+    private Long epochTime;
     public GenericWebsocketResponse(String id, Destination destination, Object messageBody , ResponseStatus responseStatus,String description){
         this.id=id;
         this.destination=destination;
         this.messageBody=messageBody;
         this.description=description;
         this.responseStatus=responseStatus;
+        epochTime= Instant.now().getEpochSecond();
     }
     public GenericWebsocketResponse(String id, Destination destination, Object messageBody ,ResponseStatus responseStatus){
         this.id=id;
         this.destination=destination;
         this.messageBody=messageBody;
         this.responseStatus=responseStatus;
+        epochTime= Instant.now().getEpochSecond();
     }
 }

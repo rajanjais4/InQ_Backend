@@ -138,6 +138,9 @@ public class EntityService {
         Entity entityDb=findUserByEntityId(entityId);
         entityDb.setStatus(status);
         entityRepo.save(entityDb);
+//        update all queue status to entity status
+        for(int i=0;i<entityDb.getQueueIds().size();i++)
+            queueService.updateQueueStatus(entityDb.getQueueIds().get(i),entityId,status);
         return entityDb;
     }
 }
