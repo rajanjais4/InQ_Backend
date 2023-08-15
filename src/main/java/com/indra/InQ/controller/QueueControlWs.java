@@ -2,6 +2,7 @@ package com.indra.InQ.controller;
 
 import com.indra.InQ.common.ResponseStatus;
 import com.indra.InQ.exception.GenricWebsocketException;
+import com.indra.InQ.modal.entity.Entity;
 import com.indra.InQ.modal.queue.QueueModal;
 import com.indra.InQ.modal.common.Destination;
 import com.indra.InQ.modal.entity.EntityQueueUpdateRequestWs;
@@ -70,6 +71,26 @@ public class QueueControlWs {
             throw new GenricWebsocketException(entityQueueUpdateRequestWs.getEntityId(),
                     Destination.entityQueueUpdate,e.getMessage());
         }
-//        TODO: implement - update send to user
+    }
+
+
+    @MessageMapping("/currentQueueSnapshot")
+    public void currentQueueSnapshot(@Payload EntityQueueUpdateRequestWs entityQueueUpdateRequestWs){
+        try {
+            System.out.println("currentQueueSnapshot Input - "+entityQueueUpdateRequestWs.toString());
+            QueueModal queue= queueService.currentQueueSnapshot(entityQueueUpdateRequestWs.getQueueId(),
+                    entityQueueUpdateRequestWs.getEntityId());
+
+            wsResponseManager.sendGenericResponse(entityQueueUpdateRequestWs.getEntityId(),
+                    Destination.entityQueueUpdate,
+                    queue,
+                    ResponseStatus.success);
+        }
+        catch (Exception e){
+//            TODO: send error message by session ID
+            System.out.println("error in currentQueueSnapshot - "+e);
+            throw new GenricWebsocketException(entityQueueUpdateRequestWs.getEntityId(),
+                    Destination.entityQueueUpdate,e.getMessage());
+        }
     }
 }

@@ -43,6 +43,5 @@ public class EntityControllerWs {
             throw new GenricWebsocketException(entityQueueUpdateRequestWs.getEntityId(),
                     Destination.entityUpdate,e.getMessage());
         }
-//        TODO: implement - update send to user
     }
 }

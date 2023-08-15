@@ -215,4 +215,10 @@ public class QueueService {
                 queueModal.getStatus());
     }
     //    Queue update by client
+    public QueueModal currentQueueSnapshot(@NonNull String queueId, @NonNull String entityId ){
+        Entity entity=entityService.findUserByEntityId(entityId);
+        QueueModal queueModalDb=getQueueById(queueId);
+        queueCommonServices.queueSanityCheck(entity,queueModalDb);
+        return queueModalDb;
+    }
 }
